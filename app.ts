@@ -6,6 +6,7 @@ const [firstName, email, password, repPassword, male, female] = allInputs;
 type Objs = {
   [key: string]: {
     [key: string]: string | number | boolean | HTMLInputElement | object;
+    element: HTMLInputElement;
     value: string;
     id: string;
     validate: { [key: string]: boolean };
@@ -72,15 +73,21 @@ formSubmitBtn.addEventListener("mouseup", (event) => {
 
   const valdates = Object.values(data);
   const errors: object[] = valdates.map((item) => {
-    const list: string[] = [];
+    const list: object[] = [];
     const validateKeys: string[] = Object.keys(item.validate);
     const id: string = item.id;
+    const attrs: NamedNodeMap = item.element.attributes;
     for (let key of validateKeys) {
       if (!item.validate[key]) {
-        list.push(`data-${key}error`);
+        const errorMassage: string | null = item.element.getAttribute(
+          `data-${key}error`
+        );
+        console.log(typeof errorMassage);
+        list.push({ value: `data-${key}error`, message: errorMassage });
+        // list.push(`data-${key}error`);
       }
     }
-    return { [id]: list };
+    return { [id]: {...list} };
   });
 
   console.log(errors);
