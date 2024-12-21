@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        <form novalidate>
+          <label for="firstName">
+            <span>Your FirstName : </span>
+            <input
+              type="text"
+              id="firstName"
+              minlength="3"
+              data-minlengtherror="Name Have To Be More Then 3 Character"
+              required
+              data-requirederror="Name is required"
+              autocomplete="off"
+            />
+          </label>
+
+          <label for="email">
+            <span>Your Email : </span>
+            <input
+              type="email"
+              id="email"
+              required
+              data-requirederror="Email is required"
+              autocomplete="off"
+              value="balaghi1999@gmail.com"
+            />
+          </label>
+
+          <label for="password">
+            <span>Your Password : </span>
+            <input
+              type="password"
+              id="password"
+              minlength="6"
+              data-minlengtherror="Password Have To Be More Then 6 Character"
+              required
+              data-requirederror="Password is required"
+              autocomplete="off"
+              value="123456"
+            />
+          </label>
+
+          <label for="repPassword">
+            <span>Your Repeat Password : </span>
+            <input
+              type="password"
+              id="repPassword"
+              minlength="6"
+              data-minlengtherror="Repeat Password Have To Be More Then 6 Character"
+              required
+              data-requirederror="Repeat Password is required"
+              autocomplete="off"
+              value="123456"
+            />
+          </label>
+
+          <div>
+            <span>Gender : </span>
+            <label for="female">
+              <span>Female</span>
+              <input
+                type="radio"
+                id="female"
+                name="gender"
+                value="female"
+                required
+                data-requirederror="Repeat Password is required"
+              />
+            </label>
+
+            <label for="male">
+              <span>Male</span>
+              <input
+                type="radio"
+                id="male"
+                name="gender"
+                value="male"
+                required
+                data-requirederror="Repeat Password is required"
+              />
+            </label>
+          </div>
+
+          <button>Signup</button>
+        </form>
+      </div>
+    </div>
+  </body>
+
+  <script src="app.js" defer></script>
+</html>

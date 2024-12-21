@@ -1,0 +1,9 @@
+label:not(div > label) {
+    display: block;
+    width: max-content;
+    margin-bottom: 20px;
+}
+
+form > div {
+    margin-bottom: 20px;
+}
