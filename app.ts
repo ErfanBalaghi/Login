@@ -5,7 +5,7 @@ const [firstName, email, password, repPassword] = allInputs;
 const formSubmitBtn = document.querySelector("button") as HTMLButtonElement;
 
 interface objectStructor {
-  [key: string]: object;
+  [key: string]: { [key: string]: any };
 }
 
 formElement.addEventListener("submit", (event) => {
@@ -50,14 +50,13 @@ function getAttrs(
 function checkFileds(
   attrFields: objectStructor,
   elements = [firstName, email, password, repPassword]
-) {
-  const getErrors: objectStructor = {};
+): objectStructor {
+  const getErrors: objectStructor = attrFields;
 
   elements.forEach((item, index) => {
     const objAttrs: objectStructor = { ...attrFields[item.id] };
     for (const key in objAttrs) {
       const itemAttr = objAttrs[key];
-      // console.log(key);
       if (
         key === "required" &&
         "value" in itemAttr &&
@@ -68,6 +67,10 @@ function checkFileds(
           type: key,
           inputValue: item.value,
         });
+        getErrors[item.id][key] = {
+          ...getErrors[item.id][key],
+          valide: result,
+        };
       }
 
       if (
@@ -80,10 +83,15 @@ function checkFileds(
           type: key,
           inputValue: item.value,
         });
+        getErrors[item.id][key] = {
+          ...getErrors[item.id][key],
+          valide: result,
+        };
       }
     }
-    getErrors[item.id] = {};
   });
+
+  return getErrors;
 }
 
 function checkLength(data: {
@@ -118,6 +126,6 @@ function checkRequired(data: {
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
   const attrValues: objectStructor = getAttrs();
-  checkFileds(attrValues);
-  // console.log(attrValues);
+  const errors: objectStructor = checkFileds(attrValues);
+  console.log(errors);
 });
