@@ -1,7 +1,12 @@
 const formElement = document.querySelector("form") as HTMLFormElement;
+const allInputs = Array.from(formElement.elements) as HTMLInputElement[];
+const [firstName, email, password, repPassword] = allInputs;
+
 const formSubmitBtn = document.querySelector("button") as HTMLButtonElement;
-const [firstName, email, password, repPassword]: HTMLFormControlsCollection =
-  formElement.elements;
+
+interface objectStructor {
+  [key: string]: object;
+}
 
 formElement.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -9,7 +14,7 @@ formElement.addEventListener("submit", (event) => {
 
 function getAttrs(
   elements = [firstName, email, password, repPassword]
-): object {
+): objectStructor {
   const getAttrs: {
     [key: string]: object;
   } = {};
@@ -43,17 +48,76 @@ function getAttrs(
 }
 
 function checkFileds(
-  attrFields: object,
+  attrFields: objectStructor,
   elements = [firstName, email, password, repPassword]
 ) {
-  for (const key of elements) {
-    console.log(key);
+  const getErrors: objectStructor = {};
+
+  elements.forEach((item, index) => {
+    const objAttrs: objectStructor = { ...attrFields[item.id] };
+    for (const key in objAttrs) {
+      const itemAttr = objAttrs[key];
+      // console.log(key);
+      if (
+        key === "required" &&
+        "value" in itemAttr &&
+        typeof itemAttr.value === "boolean"
+      ) {
+        const result = checkRequired({
+          typeValue: itemAttr.value,
+          type: key,
+          inputValue: item.value,
+        });
+      }
+
+      if (
+        (key === "minlength" || key === "maxlength") &&
+        "value" in itemAttr &&
+        typeof itemAttr.value === "number"
+      ) {
+        const result = checkLength({
+          typeValue: itemAttr.value,
+          type: key,
+          inputValue: item.value,
+        });
+      }
+    }
+    getErrors[item.id] = {};
+  });
+}
+
+function checkLength(data: {
+  typeValue: number;
+  type: string;
+  inputValue: string;
+}) {
+  if (data.type === "minlength" && +data.typeValue <= data.inputValue.length) {
+    return true;
+  } else if (
+    data.type === "maxlength" &&
+    +data.typeValue >= data.inputValue.length
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function checkRequired(data: {
+  typeValue: boolean;
+  type: string;
+  inputValue: string;
+}) {
+  if (data.typeValue && data.inputValue) {
+    return true;
+  } else {
+    return false;
   }
 }
 
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
-  const attrValues: object = getAttrs();
+  const attrValues: objectStructor = getAttrs();
   checkFileds(attrValues);
   // console.log(attrValues);
 });
