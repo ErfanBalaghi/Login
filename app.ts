@@ -113,29 +113,38 @@ function checkPattern(data: { typeValue: string; inputValue: string }) {
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
   const attrValues: objectStructor = getAttrs();
+  let checkResultField: boolean = true;
   for (const key in attrValues) {
     attrValues[key].element.nextElementSibling.textContent = "";
     if ("required" in attrValues[key] && !attrValues[key].required.valide) {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].required.errorMessage;
+      checkResultField = false;
     } else if (
       "minlength" in attrValues[key] &&
       !attrValues[key].minlength.valide
     ) {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].minlength.errorMessage;
+      checkResultField = false;
     } else if (
       "maxlength" in attrValues[key] &&
       !attrValues[key].maxlength.valide
     ) {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].maxlength.errorMessage;
+      checkResultField = false;
     } else if (
       "pattern" in attrValues[key] &&
       !attrValues[key].pattern.valide
     ) {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].pattern.errorMessage;
+      checkResultField = false;
     }
+  }
+  console.log(allInputs)
+  if (checkResultField) {
+    console.log("signup");
   }
 });
