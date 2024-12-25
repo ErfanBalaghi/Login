@@ -23,75 +23,61 @@ function getAttrs(
       [key: string]: object;
     } = {};
     if ("required" in key.attributes) {
+      const result = checkRequired({
+        typeValue: true,
+        inputValue: key.value,
+      });
+
       attrKeys.required = {
+        valide: result,
         value: true,
         errorMessage: key.getAttribute("data-requirederror"),
       };
     }
     if ("minlength" in key.attributes) {
       const getminlength = key.getAttribute("minlength");
+      const valueHandle = typeof getminlength === "string" ? +getminlength : 0;
+      const result = checkLength({
+        typeValue: valueHandle,
+        type: "minlength",
+        inputValue: key.value,
+      });
       attrKeys.minlength = {
-        value: typeof getminlength === "string" ? +getminlength : 0,
+        valide: result,
+        value: valueHandle,
         errorMessage: key.getAttribute("data-minlengtherror"),
+      };
+    }
+    if ("pattern" in key.attributes) {
+      const getminlength = key.getAttribute("pattern");
+      const valueHandle = typeof getminlength === "string" ? getminlength : "";
+      const result = checkPattern({
+        typeValue: valueHandle,
+        inputValue: key.value,
+      });
+      attrKeys.pattern = {
+        valide: result,
+        value: valueHandle,
+        errorMessage: key.getAttribute("data-patternerror"),
       };
     }
     if ("maxlength" in key.attributes) {
       const getmaxlength = key.getAttribute("maxlength");
+      const valueHandle = typeof getmaxlength === "string" ? +getmaxlength : 0;
+      const result = checkLength({
+        typeValue: valueHandle,
+        type: "maxlength",
+        inputValue: key.value,
+      });
       attrKeys.maxlength = {
+        valide: result,
         value: typeof getmaxlength === "string" ? +getmaxlength : 0,
         errorMessage: key.getAttribute("data-maxlengtherror"),
       };
     }
-    getAttrs[key.id] = attrKeys;
+    getAttrs[key.id] = { ...attrKeys, element: key };
   }
   return getAttrs;
-}
-
-function checkFileds(
-  attrFields: objectStructor,
-  elements = [firstName, email, password, repPassword]
-): objectStructor {
-  const getErrors: objectStructor = attrFields;
-
-  elements.forEach((item, index) => {
-    const objAttrs: objectStructor = { ...attrFields[item.id] };
-    for (const key in objAttrs) {
-      const itemAttr = objAttrs[key];
-      if (
-        key === "required" &&
-        "value" in itemAttr &&
-        typeof itemAttr.value === "boolean"
-      ) {
-        const result = checkRequired({
-          typeValue: itemAttr.value,
-          type: key,
-          inputValue: item.value,
-        });
-        getErrors[item.id][key] = {
-          ...getErrors[item.id][key],
-          valide: result,
-        };
-      }
-
-      if (
-        (key === "minlength" || key === "maxlength") &&
-        "value" in itemAttr &&
-        typeof itemAttr.value === "number"
-      ) {
-        const result = checkLength({
-          typeValue: itemAttr.value,
-          type: key,
-          inputValue: item.value,
-        });
-        getErrors[item.id][key] = {
-          ...getErrors[item.id][key],
-          valide: result,
-        };
-      }
-    }
-  });
-
-  return getErrors;
 }
 
 function checkLength(data: {
@@ -111,11 +97,7 @@ function checkLength(data: {
   }
 }
 
-function checkRequired(data: {
-  typeValue: boolean;
-  type: string;
-  inputValue: string;
-}) {
+function checkRequired(data: { typeValue: boolean; inputValue: string }) {
   if (data.typeValue && data.inputValue) {
     return true;
   } else {
@@ -123,9 +105,37 @@ function checkRequired(data: {
   }
 }
 
+function checkPattern(data: { typeValue: string; inputValue: string }) {
+  const regValue = new RegExp(data.typeValue);
+  return regValue.test(data.inputValue);
+}
+
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
   const attrValues: objectStructor = getAttrs();
-  const errors: objectStructor = checkFileds(attrValues);
-  console.log(errors);
+  for (const key in attrValues) {
+    attrValues[key].element.nextElementSibling.textContent = "";
+    if ("required" in attrValues[key] && !attrValues[key].required.valide) {
+      attrValues[key].element.nextElementSibling.textContent =
+        attrValues[key].required.errorMessage;
+    } else if (
+      "minlength" in attrValues[key] &&
+      !attrValues[key].minlength.valide
+    ) {
+      attrValues[key].element.nextElementSibling.textContent =
+        attrValues[key].minlength.errorMessage;
+    } else if (
+      "maxlength" in attrValues[key] &&
+      !attrValues[key].maxlength.valide
+    ) {
+      attrValues[key].element.nextElementSibling.textContent =
+        attrValues[key].maxlength.errorMessage;
+    } else if (
+      "pattern" in attrValues[key] &&
+      !attrValues[key].pattern.valide
+    ) {
+      attrValues[key].element.nextElementSibling.textContent =
+        attrValues[key].pattern.errorMessage;
+    }
+  }
 });
