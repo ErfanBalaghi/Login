@@ -1,7 +1,6 @@
 const formElement = document.querySelector("form") as HTMLFormElement;
 const allInputs = Array.from(formElement.elements) as HTMLInputElement[];
 const [firstName, email, password, repPassword, male, female] = allInputs;
-
 const formSubmitBtn = document.querySelector("button") as HTMLButtonElement;
 
 interface objectStructor {
@@ -27,7 +26,6 @@ function getAttrs(
         typeValue: true,
         inputValue: key.value,
       });
-
       attrKeys.required = {
         valide: result,
         value: true,
@@ -107,14 +105,17 @@ function checkRequired(data: { typeValue: boolean; inputValue: string }) {
 
 function checkPattern(data: { typeValue: string; inputValue: string }) {
   const regValue = new RegExp(data.typeValue);
+
   return regValue.test(data.inputValue);
 }
 
 function checkPasswords(): boolean {
   const validatePasswords: boolean = password.value === repPassword.value;
+
   const localErrorElement = document.getElementById(
     "localError"
   ) as HTMLParagraphElement;
+
   if (!validatePasswords) {
     localErrorElement.textContent = "Passwords Is Not Equal";
     return false;
@@ -124,26 +125,35 @@ function checkPasswords(): boolean {
   return true;
 }
 
-function checkGenderHandler(): boolean {
+function checkGenderHandler(getValues: objectStructor): boolean {
   const resultElement = [male, female].find((item) => item.checked);
+
   const localErrorElement = document.getElementById(
     "genderError"
   ) as HTMLSpanElement;
+
   if (!resultElement) {
     localErrorElement.textContent = "Choose Your Gender";
     return false;
   } else {
+    getValues.gender = { value: resultElement.id };
     localErrorElement.textContent = "";
+    return true;
   }
-  return true;
 }
 
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
+
   const attrValues: objectStructor = getAttrs();
+
+  const getValues: objectStructor = {};
+
   let checkResultField: boolean = true;
+
   for (const key in attrValues) {
     attrValues[key].element.nextElementSibling.textContent = "";
+
     if ("required" in attrValues[key] && !attrValues[key].required.valide) {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].required.errorMessage;
@@ -169,14 +179,16 @@ formSubmitBtn.addEventListener("mouseup", (event) => {
       attrValues[key].element.nextElementSibling.textContent =
         attrValues[key].pattern.errorMessage;
       checkResultField = false;
+    } else {
+      getValues[key] = { value: attrValues[key].element.value };
     }
   }
 
-  let checkGender: boolean = checkGenderHandler();
+  let checkGender: boolean = checkGenderHandler(getValues);
 
   let checkPassword: boolean = checkPasswords();
 
   if (checkResultField && checkGender && checkPassword) {
-    console.log("signup");
+    console.log(getValues);
   }
 });
