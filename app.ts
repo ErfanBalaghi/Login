@@ -1,6 +1,6 @@
 const formElement = document.querySelector("form") as HTMLFormElement;
 const allInputs = Array.from(formElement.elements) as HTMLInputElement[];
-const [firstName, email, password, repPassword] = allInputs;
+const [firstName, email, password, repPassword, male, female] = allInputs;
 
 const formSubmitBtn = document.querySelector("button") as HTMLButtonElement;
 
@@ -110,6 +110,34 @@ function checkPattern(data: { typeValue: string; inputValue: string }) {
   return regValue.test(data.inputValue);
 }
 
+function checkPasswords(): boolean {
+  const validatePasswords: boolean = password.value === repPassword.value;
+  const localErrorElement = document.getElementById(
+    "localError"
+  ) as HTMLParagraphElement;
+  if (!validatePasswords) {
+    localErrorElement.textContent = "Passwords Is Not Equal";
+    return false;
+  } else {
+    localErrorElement.textContent = "";
+  }
+  return true;
+}
+
+function checkGenderHandler(): boolean {
+  const resultElement = [male, female].find((item) => item.checked);
+  const localErrorElement = document.getElementById(
+    "genderError"
+  ) as HTMLSpanElement;
+  if (!resultElement) {
+    localErrorElement.textContent = "Choose Your Gender";
+    return false;
+  } else {
+    localErrorElement.textContent = "";
+  }
+  return true;
+}
+
 formSubmitBtn.addEventListener("mouseup", (event) => {
   event.preventDefault();
   const attrValues: objectStructor = getAttrs();
@@ -143,8 +171,12 @@ formSubmitBtn.addEventListener("mouseup", (event) => {
       checkResultField = false;
     }
   }
-  console.log(allInputs)
-  if (checkResultField) {
+
+  let checkGender: boolean = checkGenderHandler();
+
+  let checkPassword: boolean = checkPasswords();
+
+  if (checkResultField && checkGender && checkPassword) {
     console.log("signup");
   }
 });
